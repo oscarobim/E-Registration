@@ -3,50 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Registration Confirmation</title>
-<style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        .container { background: #f8f8f8; padding: 20px; border-radius: 10px; display: inline-block; }
-        img { width: 100px; height: 100px; object-fit: cover; display: block; margin: auto; }
-        button { background: green; color: white; padding: 10px; border: none; cursor: pointer; margin-top: 10px; }
-</style>
+<title>Registration Successful</title>
 </head>
 <body>
 <h2>Registration Successful!</h2>
-<div class="container">
-<p><strong>Surname:</strong><span id="surname"></span></p>
-<p><strong>First Name:</strong><span id="firstname"></span></p>
-<p><strong>WhatsApp:</strong><span id="whatsapp"></span></p>
-<p><strong>Gender:</strong><span id="gender"></span></p>
-<p><strong>Email:</strong><span id="email"></span></p>
-<img id="passport" alt="Passport Photo">
-<button id="sendWhatsApp">Send Confirmation via WhatsApp</button>
-</div>
+
+<div id="userInfo"></div>
+
+<a id="whatsappLink" href="#">Click to Send Confirmation via WhatsApp</a>
 
 <script>
-        // Get details from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        document.getElementById("surname").textContent = urlParams.get("surname");
-        document.getElementById("firstname").textContent = urlParams.get("firstname");
-        document.getElementById("whatsapp").textContent = urlParams.get("whatsapp");
-        document.getElementById("gender").textContent = urlParams.get("gender");
-        document.getElementById("email").textContent = urlParams.get("email");
-        document.getElementById("passport").src = urlParams.get("passport");
+        const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+        if (userDetails) {
+            document.getElementById("userInfo").innerHTML = `
+<p><strong>Name:</strong> ${userDetails.surname} ${userDetails.firstName}</p>
+<p><strong>Phone:</strong> ${userDetails.phone}</p>
+<p><strong>Email:</strong> ${userDetails.email}</p>
+<p><strong>Occupation:</strong> ${userDetails.occupation}</p>
+<p><strong>Gender:</strong> ${userDetails.gender}</p>
+<p><strong>LGA:</strong> ${userDetails.lga}</p>
+<p><strong>Career Interest:</strong> ${userDetails.career}</p>
+            `;
 
-        // Send details via WhatsApp
-        document.getElementById("sendWhatsApp").addEventListener("click", function () {
-            const message = `Hello, I have successfully registered! Here are my details:
-Surname: ${urlParams.get("surname")}
-First Name: ${urlParams.get("firstname")}
-WhatsApp: ${urlParams.get("whatsapp")}
-Gender: ${urlParams.get("gender")}
-Email: ${urlParams.get("email")}`;
+            const whatsappMessage = `Hello, I have successfully registered for the ICT Training. Here are my details:
+            \nName: ${userDetails.surname} ${userDetails.firstName}
+            \nPhone: ${userDetails.phone}
+            \nEmail: ${userDetails.email}
+            \nOccupation: ${userDetails.occupation}
+            \nGender: ${userDetails.gender}
+            \nLGA: ${userDetails.lga}
+            \nCareer Interest: ${userDetails.career}`;
 
-            const phoneNumber = "2349161768954"; // Your WhatsApp number
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-            window.open(whatsappLink, "_blank");
-        });
+            document.getElementById("whatsappLink").href = `https://wa.me/2349161768954?text=${encodeURIComponent(whatsappMessage)}`;
+        }
 </script>
 </body>
 </html>

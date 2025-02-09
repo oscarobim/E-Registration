@@ -1,168 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empowerment Registration</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            text-align: center;
-        }
-        .container {
-            width: 90%;
-            max-width: 500px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0px 0px 10px gray;
-            border-radius: 10px;
-        }
-        h2 {
-            color: #007BFF;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            margin: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        input[type="file"] {
-            background-color: #fff;
-        }
-        button {
-            background-color: #007BFF;
-            color: white;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .preview {
-            margin-top: 10px;
-        }
-        img {
-            max-width: 100px;
-            border-radius: 50%;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICT Training Registration</title>
+<script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js"></script>
 </head>
 <body>
+<h2>ICT Training Registration</h2>
 
-<div class="container">
-    <h2>Empowerment Registration</h2>
-    <p><strong>Theme:</strong> Kingdom Wealth: Empowering the Youths Through Digital Skills</p>
-    
-    <form id="registrationForm">
-        <label>Surname:</label>
-        <input type="text" id="surname" required>
-        
-        <label>First Name:</label>
-        <input type="text" id="firstName" required>
-        
-        <label>WhatsApp Number:</label>
-        <input type="tel" id="whatsappNumber" required>
-        
-        <label>Email:</label>
-        <input type="email" id="email" required>
-        
-        <label>Occupation:</label>
-        <input type="text" id="occupation" required>
-        
-        <label>Gender:</label>
-        <select id="gender" required>
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-        </select>
-        
-        <label>Date of Birth:</label>
-        <input type="date" id="dob" required>
-        
-        <label>LGA Area of Origin:</label>
-        <input type="text" id="lga" required>
-        
-        <label>Will you like to pursue a career in ICT after this training?</label>
-        <select id="careerICT" required>
-            <option value="">Select an Option</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-        </select>
+<form id="registrationForm">
+<label>Surname:</label>
+<input type="text" id="surname" required><br>
 
-        <label>Passport Photograph:</label>
-        <input type="file" id="passportPhoto" accept="image/*" onchange="previewPhoto()">
-        <div class="preview">
-            <img id="photoPreview" src="" alt="Passport Preview">
-        </div>
+<label>First Name:</label>
+<input type="text" id="firstName" required><br>
 
-        <label>
-            <input type="checkbox" id="terms" required>
-            I agree to the terms and conditions.
-        </label>
+<label>WhatsApp Number:</label>
+<input type="text" id="phone" required><br>
 
-        <button type="button" onclick="registerUser()">Register</button>
-    </form>
-</div>
+<label>Occupation:</label>
+<input type="text" id="occupation" required><br>
+
+<label>Gender:</label>
+<select id="gender" required>
+<option value="">Select</option>
+<option value="Male">Male</option>
+<option value="Female">Female</option>
+</select><br>
+
+<label>Email:</label>
+<input type="email" id="email" required><br>
+
+<label>LGA Area Origin:</label>
+<input type="text" id="lga" required><br>
+
+<label>Will you pursue a career in ICT?</label>
+<select id="career" required>
+<option value="">Select</option>
+<option value="Yes">Yes</option>
+<option value="No">No</option>
+</select><br>
+
+<label>Passport Photograph:</label>
+<input type="file" id="passport" accept="image/*" required><br>
+
+<div id="recaptcha-container"></div>
+
+<button type="button" onclick="sendOTP()">Send OTP</button>
+<input type="text" id="otp" placeholder="Enter OTP" required>
+<button type="button" onclick="verifyOTP()">Verify OTP</button>
+
+<button type="submit" disabled id="registerBtn">Register</button>
+</form>
 
 <script>
-    function previewPhoto() {
-        const file = document.getElementById("passportPhoto").files[0];
-        const reader = new FileReader();
-
-        reader.onload = function (e) {
-            document.getElementById("photoPreview").src = e.target.result;
+        const firebaseConfig = {
+            apiKey: "AIzaSyBojNY26oE7u6CiBeUwGEvcimCNdU7CsUQ",
+            authDomain: "ict-training-registration.firebaseapp.com",
+            projectId: "ict-training-registration",
+            storageBucket: "ict-training-registration.firebasestorage.app",
+            messagingSenderId: "145482288886",
+            appId: "1:145482288886:web:6b22982057332d2da5e6d7"
         };
 
-        if (file) {
-            reader.readAsDataURL(file);
+        firebase.initializeApp(firebaseConfig);
+
+        let phoneNumber;
+        let confirmationResult;
+
+        function sendOTP() {
+            phoneNumber = document.getElementById("phone").value;
+            if (phoneNumber.length < 10) {
+                alert("Enter a valid phone number!");
+                return;
+            }
+
+            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+'size': 'invisible'
+            });
+
+            firebase.auth().signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier)
+                .then((result) => {
+                    confirmationResult = result;
+                    alert("OTP sent successfully!");
+                }).catch((error) => {
+                    alert("Error sending OTP: " + error.message);
+                });
         }
-    }
 
-    function registerUser() {
-        const surname = document.getElementById("surname").value;
-        const firstName = document.getElementById("firstName").value;
-        const whatsappNumber = document.getElementById("whatsappNumber").value;
-        const email = document.getElementById("email").value;
-        const occupation = document.getElementById("occupation").value;
-        const gender = document.getElementById("gender").value;
-        const dob = document.getElementById("dob").value;
-        const lga = document.getElementById("lga").value;
-        const careerICT = document.getElementById("careerICT").value;
-        const terms = document.getElementById("terms").checked;
-        const photoSrc = document.getElementById("photoPreview").src;
+        function verifyOTP() {
+            const otp = document.getElementById("otp").value;
+            if (!otp) {
+                alert("Enter OTP to proceed!");
+                return;
+            }
 
-        if (!terms) {
-            alert("You must agree to the terms and conditions.");
-            return;
+            confirmationResult.confirm(otp).then(() => {
+                alert("OTP verified successfully!");
+                document.getElementById("registerBtn").disabled = false;
+            }).catch((error) => {
+                alert("Invalid OTP: " + error.message);
+            });
         }
 
-        const uniqueID = "REG" + Math.floor(Math.random() * 1000000);
-        
-        const userData = {
-            id: uniqueID,
-            surname,
-            firstName,
-            whatsappNumber,
-            email,
-            occupation,
-            gender,
-            dob,
-            lga,
-            careerICT,
-            photoSrc
+        document.getElementById("registrationForm").onsubmit = function (event) {
+            event.preventDefault();
+
+            const userDetails = {
+                surname: document.getElementById("surname").value,
+                firstName: document.getElementById("firstName").value,
+                phone: document.getElementById("phone").value,
+                occupation: document.getElementById("occupation").value,
+                gender: document.getElementById("gender").value,
+                email: document.getElementById("email").value,
+                lga: document.getElementById("lga").value,
+                career: document.getElementById("career").value
+            };
+
+            localStorage.setItem("userDetails", JSON.stringify(userDetails));
+
+            window.location.href = "confirmation.html";
         };
-
-        localStorage.setItem("userReceipt", JSON.stringify(userData));
-
-        window.location.href = "receipt.html";
-    }
 </script>
-
 </body>
 </html>
