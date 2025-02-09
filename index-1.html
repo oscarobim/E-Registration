@@ -1,86 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Empowerment Registration</title>
-<style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        form { max-width: 400px; margin: auto; background: #f8f8f8; padding: 20px; border-radius: 10px; }
-        input, select { width: 100%; padding: 10px; margin: 10px 0; }
-        button { background: green; color: white; padding: 10px; width: 100%; border: none; cursor: pointer; }
-        img { width: 100px; height: 100px; object-fit: cover; display: block; margin: auto; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empowerment Program Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px gray;
+            border-radius: 10px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        #otpSection {
+            display: none;
+        }
+        #confirmation {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<h2>Empowerment Registration</h2>
-<form id="registrationForm">
-<input type="text" id="surname" placeholder="Surname" required>
-<input type="text" id="firstname" placeholder="First Name" required>
-<input type="text" id="whatsapp" placeholder="WhatsApp Number" required>
-<select id="gender" required>
-<option value="">Select Gender</option>
-<option value="Male">Male</option>
-<option value="Female">Female</option>
-</select>
-<input type="email" id="email" placeholder="Email" required>
-<input type="file" id="passport" accept="image/*" required>
-<img id="preview" style="display: none;">
-<button type="submit">Register</button>
-</form>
 
-<script>
-        // Show image preview before submission
-        document.getElementById("passport").addEventListener("change", function (event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    document.getElementById("preview").src = e.target.result;
-                    document.getElementById("preview").style.display = "block";
-                };
-                reader.readAsDataURL(file);
+    <div class="container" id="registrationForm">
+        <h2>Empowerment Program Registration</h2>
+        <label>Surname:</label>
+        <input type="text" id="surname" required>
+
+        <label>First Name:</label>
+        <input type="text" id="firstName" required>
+
+        <label>WhatsApp Number:</label>
+        <input type="text" id="phoneNumber" placeholder="+234XXXXXXXXXX" required>
+
+        <label>Occupation:</label>
+        <input type="text" id="occupation" required>
+
+        <label>Gender:</label>
+        <select id="gender" required>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+
+        <label>Email:</label>
+        <input type="email" id="email" required>
+
+        <label>LGA Area of Origin:</label>
+        <input type="text" id="lga" required>
+
+        <label>Will you like to pursue a career in ICT after this training?</label>
+        <select id="ictCareer" required>
+            <option value="">Select Option</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+
+        <label>Passport Photograph:</label>
+        <input type="file" id="passport" accept="image/*" required>
+
+        <button type="button" onclick="sendOTP()">Send OTP</button>
+
+        <div id="otpSection">
+            <label>Enter OTP:</label>
+            <input type="text" id="otpCode" required>
+            <button type="button" onclick="verifyOTP()">Verify OTP</button>
+        </div>
+
+        <button type="button" id="registerBtn" onclick="registerUser()" disabled>Register</button>
+    </div>
+
+    <div class="container" id="confirmation">
+        <h2>Registration Successful!</h2>
+        <p><strong>Name:</strong> <span id="confName"></span></p>
+        <p><strong>WhatsApp:</strong> <span id="confPhone"></span></p>
+        <p><strong>Email:</strong> <span id="confEmail"></span></p>
+        <p><strong>Gender:</strong> <span id="confGender"></span></p>
+        <p><strong>ICT Career Interest:</strong> <span id="confICT"></span></p>
+        <img id="confPassport" width="100" height="100">
+        
+        <p>
+            <a id="whatsappLink" target="_blank">Click here to send details on WhatsApp</a>
+        </p>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        function sendOTP() {
+            let phoneNumber = document.getElementById("phoneNumber").value;
+            let appVerifier = new firebase.auth.RecaptchaVerifier("registerBtn", { size: "invisible" });
+
+            auth.signInWithPhoneNumber(phoneNumber, appVerifier)
+                .then(confirmationResult => {
+                    window.confirmationResult = confirmationResult;
+                    document.getElementById("otpSection").style.display = "block";
+                    alert("OTP sent to your phone!");
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+        }
+
+        function verifyOTP() {
+            let otpCode = document.getElementById("otpCode").value;
+            confirmationResult.confirm(otpCode)
+                .then(result => {
+                    document.getElementById("registerBtn").disabled = false;
+                    alert("OTP Verified!");
+                })
+                .catch(error => {
+                    alert("Invalid OTP, try again!");
+                });
+        }
+
+        function registerUser() {
+            let name = document.getElementById("surname").value + " " + document.getElementById("firstName").value;
+            let phone = document.getElementById("phoneNumber").value;
+            let email = document.getElementById("email").value;
+            let gender = document.getElementById("gender").value;
+            let ictCareer = document.getElementById("ictCareer").value;
+            let passport = document.getElementById("passport").files[0];
+
+            if (!passport) {
+                alert("Please upload a passport photograph.");
+                return;
             }
-        });
 
-        document.getElementById("registrationForm").addEventListener("submit", function (event) {
-            event.preventDefault();
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById("confPassport").src = e.target.result;
+            };
+            reader.readAsDataURL(passport);
 
-            // Get values from form
-            const surname = document.getElementById("surname").value;
-            const firstname = document.getElementById("firstname").value;
-            const whatsapp = document.getElementById("whatsapp").value;
-            const gender = document.getElementById("gender").value;
-            const email = document.getElementById("email").value;
-            const passport = document.getElementById("preview").src; // Get image preview
+            document.getElementById("confName").innerText = name;
+            document.getElementById("confPhone").innerText = phone;
+            document.getElementById("confEmail").innerText = email;
+            document.getElementById("confGender").innerText = gender;
+            document.getElementById("confICT").innerText = ictCareer;
 
-            // Redirect to confirmation page with details
-            const url = `confirmation.html?surname=${encodeURIComponent(surname)}
-&firstname=${encodeURIComponent(firstname)}
-&whatsapp=${encodeURIComponent(whatsapp)}
-&gender=${encodeURIComponent(gender)}
-&email=${encodeURIComponent(email)}
-&passport=${encodeURIComponent(passport)}`;
+            let whatsappMsg = `Name: ${name}%0AWhatsApp: ${phone}%0AEmail: ${email}%0AGender: ${gender}%0AICT Career: ${ictCareer}`;
+            document.getElementById("whatsappLink").href = `https://wa.me/2349161768954?text=${whatsappMsg}`;
 
-            window.location.href = url;
-        });
-</script>
-        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+            document.getElementById("registrationForm").style.display = "none";
+            document.getElementById("confirmation").style.display = "block";
+        }
+    </script>
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyBojNY26oE7u6CiBeUwGEvcimCNdU7CsUQ",
-  authDomain: "ict-training-registration.firebaseapp.com",
-  projectId: "ict-training-registration",
-  storageBucket: "ict-training-registration.firebasestorage.app",
-  messagingSenderId: "145482288886",
-  appId: "1:145482288886:web:6b22982057332d2da5e6d7"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
 </body>
 </html>
