@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registration Receipt</title>
+<style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        .container {
+            width: 90%;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0px 0px 10px gray;
+            border-radius: 10px;
+        }
+        h2 {
+            color: #007BFF;
+        }
+        img {
+            max-width: 100px;
+            border-radius: 50%;
+            margin-top: 10px;
+        }
+        .details {
+            text-align: left;
+        }
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .whatsapp-btn:hover {
+            background-color: #1EBE57;
+        }
+</style>
+</head>
+<body>
+
+<div class="container">
+<h2>Registration Receipt</h2>
+<div id="receiptData"></div>
+<button class="whatsapp-btn" onclick="sendToWhatsApp()">Send Registration to WhatsApp</button>
+</div>
+
+<script>
+    const userData = JSON.parse(localStorage.getItem("userReceipt"));
+
+    if (userData) {
+        document.getElementById("receiptData").innerHTML = `
+<p><strong>Registration ID:</strong> ${userData.id}</p>
+<p><strong>Name:</strong> ${userData.surname} ${userData.firstName}</p>
+<p><strong>WhatsApp Number:</strong> ${userData.whatsappNumber}</p>
+<p><strong>Email:</strong> ${userData.email}</p>
+<p><strong>Occupation:</strong> ${userData.occupation}</p>
+<p><strong>Gender:</strong> ${userData.gender}</p>
+<p><strong>Date of Birth:</strong> ${userData.dob}</p>
+<p><strong>LGA Area of Origin:</strong> ${userData.lga}</p>
+<p><strong>Career in ICT:</strong> ${userData.careerICT}</p>
+<img src="${userData.photoSrc}" alt="Passport Photo">
+<p>Thank you for registering!</p>
+        `;
+    } else {
+        document.getElementById("receiptData").innerHTML = "<p>No registration found.</p>";
+    }
+
+    function sendToWhatsApp() {
+        const message = `Hello, I have successfully registered. Here are my details:\n\n` +
+            `🔹 Registration ID: ${userData.id}\n` +
+            `🔹 Name: ${userData.surname} ${userData.firstName}\n` +
+            `🔹 WhatsApp Number: ${userData.whatsappNumber}\n` +
+            `🔹 Email: ${userData.email}\n` +
+            `🔹 Occupation: ${userData.occupation}\n` +
+            `🔹 Gender: ${userData.gender}\n` +
+            `🔹 Date of Birth: ${userData.dob}\n` +
+            `🔹 LGA Area of Origin: ${userData.lga}\n` +
+            `🔹 Career in ICT: ${userData.careerICT}\n\n` +
+            `✅ Looking forward to the training!`;
+
+        const phoneNumber = "2349161768954";  // Your WhatsApp number (Nigeria country code added)
+        const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+        window.open(whatsappURL, "_blank");
+    }
+</script>
+
+</body>
+</html>
