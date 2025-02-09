@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registration Receipt</title>
+<style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        img { width: 100px; height: 100px; border: 1px solid gray; }
+</style>
+</head>
+<body>
+<h2>Registration Receipt</h2>
+<p><strong>Unique ID:</strong><span id="uniqueID"></span></p>
+<p><strong>Name:</strong><span id="fullName"></span></p>
+<p><strong>WhatsApp:</strong><span id="whatsapp"></span></p>
+<p><strong>Occupation:</strong><span id="occupation"></span></p>
+<p><strong>Gender:</strong><span id="gender"></span></p>
+<p><strong>Email:</strong><span id="email"></span></p>
+<img id="passport">
+<br><br>
+<button onclick="window.print()">Print Receipt</button>
+
+<script>
+        window.onload = function() {
+            var params = new URLSearchParams(window.location.search);
+            var uniqueID = params.get("uniqueID");
+
+            var participant = JSON.parse(localStorage.getItem(uniqueID));
+
+            if (!participant) {
+                document.body.innerHTML = "<h2>Invalid Receipt</h2>";
+                return;
+            }
+
+            document.getElementById("uniqueID").textContent = participant.uniqueID;
+            document.getElementById("fullName").textContent = participant.surname + "" + participant.firstName;
+            document.getElementById("whatsapp").textContent = participant.whatsapp;
+            document.getElementById("occupation").textContent = participant.occupation;
+            document.getElementById("gender").textContent = participant.gender;
+            document.getElementById("email").textContent = participant.email;
+            document.getElementById("passport").src = participant.passport;
+        };
+</script>
+</body>
+</html>
