@@ -6,6 +6,8 @@
 <title>Registration Successful</title>
 </head>
 <body>
+<h1>Kingdom Wealth: Empowering the Youths Through Digital Skills</h1>
+<h3>Venue: Latter Rain Redeemers Assembly Int'l, King's Hill, Ishiagu, Ivo LGA, Ebonyi State.</h3>
 <h2>Registration Successful!</h2>
 
 <div id="userInfo"></div>
@@ -24,6 +26,7 @@
 <p><strong>Gender:</strong> ${userDetails.gender}</p>
 <p><strong>LGA:</strong> ${userDetails.lga}</p>
 <p><strong>Career Interest:</strong> ${userDetails.career}</p>
+<p><strong>Venue:</strong> Latter Rain Redeemers Assembly Int'l, King's Hill, Ishiagu, Ivo LGA, Ebonyi State.</p>
             `;
 
             const whatsappMessage = `Hello, I have successfully registered for the ICT Training. Here are my details:
@@ -34,7 +37,8 @@
             \nOccupation: ${userDetails.occupation}
             \nGender: ${userDetails.gender}
             \nLGA: ${userDetails.lga}
-            \nCareer Interest: ${userDetails.career}`;
+            \nCareer Interest: ${userDetails.career}
+            \nVenue: Latter Rain Redeemers Assembly Int'l, King's Hill, Ishiagu, Ivo LGA, Ebonyi State.`;
 
             document.getElementById("whatsappLink").href = `https://wa.me/2349161768954?text=${encodeURIComponent(whatsappMessage)}`;
         }
