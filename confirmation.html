@@ -1,31 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Registration Successful</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Successful</title>
 </head>
 <body>
-<h2>Registration Successful!</h2>
+    <h2>Registration Successful!</h2>
 
-<div id="userInfo"></div>
+    <div id="userInfo"></div>
 
-<a id="whatsappLink" href="#">Click to Send Confirmation via WhatsApp</a>
+    <a id="whatsappLink" href="#">Click to Send Confirmation via WhatsApp</a>
 
-<script>
+    <script>
         const userDetails = JSON.parse(localStorage.getItem("userDetails"));
         if (userDetails) {
             document.getElementById("userInfo").innerHTML = `
-<p><strong>Name:</strong> ${userDetails.surname} ${userDetails.firstName}</p>
-<p><strong>Phone:</strong> ${userDetails.phone}</p>
-<p><strong>Email:</strong> ${userDetails.email}</p>
-<p><strong>Occupation:</strong> ${userDetails.occupation}</p>
-<p><strong>Gender:</strong> ${userDetails.gender}</p>
-<p><strong>LGA:</strong> ${userDetails.lga}</p>
-<p><strong>Career Interest:</strong> ${userDetails.career}</p>
+                <p><strong>Registration Number:</strong> ${userDetails.regNumber}</p>
+                <p><strong>Name:</strong> ${userDetails.surname} ${userDetails.firstName}</p>
+                <p><strong>Phone:</strong> ${userDetails.phone}</p>
+                <p><strong>Email:</strong> ${userDetails.email}</p>
+                <p><strong>Occupation:</strong> ${userDetails.occupation}</p>
+                <p><strong>Gender:</strong> ${userDetails.gender}</p>
+                <p><strong>LGA:</strong> ${userDetails.lga}</p>
+                <p><strong>Career Interest:</strong> ${userDetails.career}</p>
             `;
 
             const whatsappMessage = `Hello, I have successfully registered for the ICT Training. Here are my details:
+            \nRegistration Number: ${userDetails.regNumber}
             \nName: ${userDetails.surname} ${userDetails.firstName}
             \nPhone: ${userDetails.phone}
             \nEmail: ${userDetails.email}
@@ -36,6 +38,6 @@
 
             document.getElementById("whatsappLink").href = `https://wa.me/2349161768954?text=${encodeURIComponent(whatsappMessage)}`;
         }
-</script>
+    </script>
 </body>
 </html>
