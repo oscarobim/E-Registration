@@ -1,57 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ICT Training Registration</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICT Training Registration</title>
 </head>
 <body>
-<h2>ICT Training Registration</h2>
+    <h2>ICT Training Registration</h2>
+    
+    <form id="registrationForm">
+        <label>Surname:</label>
+        <input type="text" id="surname" required><br>
 
-<form id="registrationForm">
-<label>Surname:</label>
-<input type="text" id="surname" required><br>
+        <label>First Name:</label>
+        <input type="text" id="firstName" required><br>
 
-<label>First Name:</label>
-<input type="text" id="firstName" required><br>
+        <label>WhatsApp Number:</label>
+        <input type="text" id="phone" required><br>
 
-<label>WhatsApp Number:</label>
-<input type="text" id="phone" required><br>
+        <label>Occupation:</label>
+        <input type="text" id="occupation" required><br>
 
-<label>Occupation:</label>
-<input type="text" id="occupation" required><br>
+        <label>Gender:</label>
+        <select id="gender" required>
+            <option value="">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select><br>
 
-<label>Gender:</label>
-<select id="gender" required>
-<option value="">Select</option>
-<option value="Male">Male</option>
-<option value="Female">Female</option>
-</select><br>
+        <label>Email:</label>
+        <input type="email" id="email" required><br>
 
-<label>Email:</label>
-<input type="email" id="email" required><br>
+        <label>LGA Area Origin:</label>
+        <input type="text" id="lga" required><br>
 
-<label>LGA Area Origin:</label>
-<input type="text" id="lga" required><br>
+        <label>Will you pursue a career in ICT?</label>
+        <select id="career" required>
+            <option value="">Select</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select><br>
 
-<label>Will you pursue a career in ICT?</label>
-<select id="career" required>
-<option value="">Select</option>
-<option value="Yes">Yes</option>
-<option value="No">No</option>
-</select><br>
+        <label>Passport Photograph:</label>
+        <input type="file" id="passport" accept="image/*" required><br>
 
-<label>Passport Photograph:</label>
-<input type="file" id="passport" accept="image/*" required><br>
+        <button type="submit">Register</button>
+    </form>
 
-<button type="submit">Register</button>
-</form>
-
-<script>
+    <script>
         document.getElementById("registrationForm").onsubmit = function (event) {
             event.preventDefault();
 
+            // Generate a unique 6-digit registration number
+            const uniqueID = "ICT-" + Math.floor(100000 + Math.random() * 900000);
+
             const userDetails = {
+                regNumber: uniqueID,
                 surname: document.getElementById("surname").value,
                 firstName: document.getElementById("firstName").value,
                 phone: document.getElementById("phone").value,
@@ -66,6 +70,6 @@
 
             window.location.href = "confirmation.html";
         };
-</script>
+    </script>
 </body>
 </html>
