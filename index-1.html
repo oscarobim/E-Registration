@@ -3,174 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empowerment Program Registration</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-        }
-        .container {
-            width: 90%;
-            max-width: 400px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            box-shadow: 0px 0px 10px gray;
-            border-radius: 10px;
-        }
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-        }
-        #otpSection {
-            display: none;
-        }
-        #confirmation {
-            display: none;
-        }
-    </style>
+    <title>ICT Training Registration</title>
 </head>
 <body>
-
-    <div class="container" id="registrationForm">
-        <h2>Empowerment Program Registration</h2>
+    <h2>ICT Training Registration</h2>
+    
+    <form id="registrationForm">
         <label>Surname:</label>
-        <input type="text" id="surname" required>
+        <input type="text" id="surname" required><br>
 
         <label>First Name:</label>
-        <input type="text" id="firstName" required>
+        <input type="text" id="firstName" required><br>
 
         <label>WhatsApp Number:</label>
-        <input type="text" id="phoneNumber" placeholder="+234XXXXXXXXXX" required>
+        <input type="text" id="phone" required><br>
 
         <label>Occupation:</label>
-        <input type="text" id="occupation" required>
+        <input type="text" id="occupation" required><br>
 
         <label>Gender:</label>
         <select id="gender" required>
-            <option value="">Select Gender</option>
+            <option value="">Select</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
-        </select>
+        </select><br>
 
         <label>Email:</label>
-        <input type="email" id="email" required>
+        <input type="email" id="email" required><br>
 
-        <label>LGA Area of Origin:</label>
-        <input type="text" id="lga" required>
+        <label>LGA Area Origin:</label>
+        <input type="text" id="lga" required><br>
 
-        <label>Will you like to pursue a career in ICT after this training?</label>
-        <select id="ictCareer" required>
-            <option value="">Select Option</option>
+        <label>Will you pursue a career in ICT?</label>
+        <select id="career" required>
+            <option value="">Select</option>
             <option value="Yes">Yes</option>
             <option value="No">No</option>
-        </select>
+        </select><br>
 
         <label>Passport Photograph:</label>
-        <input type="file" id="passport" accept="image/*" required>
+        <input type="file" id="passport" accept="image/*" required><br>
 
-        <button type="button" onclick="sendOTP()">Send OTP</button>
+        <button type="submit">Register</button>
+    </form>
 
-        <div id="otpSection">
-            <label>Enter OTP:</label>
-            <input type="text" id="otpCode" required>
-            <button type="button" onclick="verifyOTP()">Verify OTP</button>
-        </div>
-
-        <button type="button" id="registerBtn" onclick="registerUser()" disabled>Register</button>
-    </div>
-
-    <div class="container" id="confirmation">
-        <h2>Registration Successful!</h2>
-        <p><strong>Name:</strong> <span id="confName"></span></p>
-        <p><strong>WhatsApp:</strong> <span id="confPhone"></span></p>
-        <p><strong>Email:</strong> <span id="confEmail"></span></p>
-        <p><strong>Gender:</strong> <span id="confGender"></span></p>
-        <p><strong>ICT Career Interest:</strong> <span id="confICT"></span></p>
-        <img id="confPassport" width="100" height="100">
-        
-        <p>
-            <a id="whatsappLink" target="_blank">Click here to send details on WhatsApp</a>
-        </p>
-    </div>
-
-    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js"></script>
-    
     <script>
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
+        document.getElementById("registrationForm").onsubmit = function (event) {
+            event.preventDefault();
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+            // Generate a unique 6-digit registration number
+            const uniqueID = "ICT-" + Math.floor(100000 + Math.random() * 900000);
 
-        function sendOTP() {
-            let phoneNumber = document.getElementById("phoneNumber").value;
-            let appVerifier = new firebase.auth.RecaptchaVerifier("registerBtn", { size: "invisible" });
-
-            auth.signInWithPhoneNumber(phoneNumber, appVerifier)
-                .then(confirmationResult => {
-                    window.confirmationResult = confirmationResult;
-                    document.getElementById("otpSection").style.display = "block";
-                    alert("OTP sent to your phone!");
-                })
-                .catch(error => {
-                    alert(error.message);
-                });
-        }
-
-        function verifyOTP() {
-            let otpCode = document.getElementById("otpCode").value;
-            confirmationResult.confirm(otpCode)
-                .then(result => {
-                    document.getElementById("registerBtn").disabled = false;
-                    alert("OTP Verified!");
-                })
-                .catch(error => {
-                    alert("Invalid OTP, try again!");
-                });
-        }
-
-        function registerUser() {
-            let name = document.getElementById("surname").value + " " + document.getElementById("firstName").value;
-            let phone = document.getElementById("phoneNumber").value;
-            let email = document.getElementById("email").value;
-            let gender = document.getElementById("gender").value;
-            let ictCareer = document.getElementById("ictCareer").value;
-            let passport = document.getElementById("passport").files[0];
-
-            if (!passport) {
-                alert("Please upload a passport photograph.");
-                return;
-            }
-
-            let reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById("confPassport").src = e.target.result;
+            const userDetails = {
+                regNumber: uniqueID,
+                surname: document.getElementById("surname").value,
+                firstName: document.getElementById("firstName").value,
+                phone: document.getElementById("phone").value,
+                occupation: document.getElementById("occupation").value,
+                gender: document.getElementById("gender").value,
+                email: document.getElementById("email").value,
+                lga: document.getElementById("lga").value,
+                career: document.getElementById("career").value
             };
-            reader.readAsDataURL(passport);
 
-            document.getElementById("confName").innerText = name;
-            document.getElementById("confPhone").innerText = phone;
-            document.getElementById("confEmail").innerText = email;
-            document.getElementById("confGender").innerText = gender;
-            document.getElementById("confICT").innerText = ictCareer;
+            localStorage.setItem("userDetails", JSON.stringify(userDetails));
 
-            let whatsappMsg = `Name: ${name}%0AWhatsApp: ${phone}%0AEmail: ${email}%0AGender: ${gender}%0AICT Career: ${ictCareer}`;
-            document.getElementById("whatsappLink").href = `https://wa.me/2349161768954?text=${whatsappMsg}`;
-
-            document.getElementById("registrationForm").style.display = "none";
-            document.getElementById("confirmation").style.display = "block";
-        }
+            window.location.href = "confirmation.html";
+        };
     </script>
-
 </body>
 </html>
